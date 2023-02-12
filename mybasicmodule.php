@@ -26,7 +26,9 @@
 *  @copyright 2007-2022 PrestaShop SA
 *  @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
 *  International Registered Trademark & Property of PrestaShop SA
+
 */
+
 use PrestaShop\PrestaShop\Core\Module\WidgetInterface;
 use PrestaShop\Module\Mbo\RecommendedModule\RecommendedModule;
 
@@ -35,7 +37,7 @@ if (!defined('_PS_VERSION_')) {
 }
 
 //class MyBasicModule extends Module implements WidgetInterface
-class MyBasicModule extends Module 
+class MyBasicModule extends Module implements WidgetInterface
 {
     public $name;
     public $templateFile;
@@ -81,7 +83,7 @@ class MyBasicModule extends Module
     public function dbInstall(){
         return true;
     }
-     
+   /*  
   public function hookdisplayFooter($params)
     {
        // print_r($this->context);
@@ -102,7 +104,16 @@ class MyBasicModule extends Module
             ]
         );   
         return $this->fetch("module:mybasicmodule/views/templates/hook/footer.tpl"); 
+    }*/
+    public function renderWidget($hookName , array $configuration)
+    {    
+        return $this->fetch("module:mybasicmodule/views/templates/hook/footer.tpl", $this->getCacheId('mybasicmodule'));
+        
     }
-    
+
+    public function getWidgetVariables($hookName, array $configuration)
+    {   
+        return true;
+    }
 
 }
