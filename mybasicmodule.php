@@ -82,7 +82,7 @@ class MyBasicModule extends Module
         return true;
     }
      
- /* public function hookdisplayFooter($params)
+  public function hookdisplayFooter($params)
     {
        // print_r($this->context);
         $this->context->smarty->assign(
@@ -91,7 +91,7 @@ class MyBasicModule extends Module
             ]
         );
         return $this->fetch("module:mybasicmodule/views/templates/hook/firstFooter.tpl");
-    }*/
+    }
   public function hookdisplayNavFullWidth($params)
     {
         $this->context->smarty->assign(
