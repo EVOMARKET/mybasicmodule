@@ -102,7 +102,30 @@ class MyBasicModule extends Module
             ]
         );   
         return $this->fetch("module:mybasicmodule/views/templates/hook/footer.tpl"); 
+    } 
+    public function renderWidget($hookName , array $configuration)
+    {
+      
+       // echo $this->context::getContext()->link->getModuleLink('mybasicmodule', 'test');
+      
+       if ($hookName !== 'displayNavFullWidth') {
+           return "Wyjątek !";      
+        }
+     
+            $this->smarty->assign($this->getWidgetVariables($hookName,  $configuration ));
+     
+        return $this->fetch("module:mybasicmodule/views/templates/hook/footer.tpl");
+        
     }
-    
+
+    public function getWidgetVariables($hookName, array $configuration)
+    {   
+        return [
+            'idcart' => $this->context->cart->id,
+            'myparamtest' => "Prestashop developer",
+            'myparamlog' => $this->context->cookie->customer_lastname,
+            'mojtekst' => "Grzegorz Hys"
+        ];
+    }
 
 }
