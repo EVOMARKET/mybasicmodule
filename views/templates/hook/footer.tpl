@@ -1,5 +1,6 @@
 <h1>
-{*The current cart id is: {$idcart}<br>*}
+Hello {$myparamtest}
+Your current id is {$idcart}
 We are using the widhtet API ! <br>
-{*{$myparamlog}*}
+
 </h1>

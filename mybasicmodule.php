@@ -83,37 +83,25 @@ class MyBasicModule extends Module implements WidgetInterface
     public function dbInstall(){
         return true;
     }
-   /*  
-  public function hookdisplayFooter($params)
-    {
-       // print_r($this->context);
-        $this->context->smarty->assign(
-            [
-                'mojtekst' => "Grzegorz Hys"
-            ]
-        );
-        return $this->fetch("module:mybasicmodule/views/templates/hook/firstFooter.tpl");
-    }
-  public function hookdisplayNavFullWidth($params)
-    {
-        $this->context->smarty->assign(
-            [
-                'idcart' => $this->context->cart->id,
-                'myparamtest' => "Prestashop developer",
-                'myparamlog' => $this->context->cookie->customer_lastname
-            ]
-        );   
-        return $this->fetch("module:mybasicmodule/views/templates/hook/footer.tpl"); 
-    }*/
+  
     public function renderWidget($hookName , array $configuration)
     {    
+        if($hookName === 'displayNavFullWidth'){
+            return "Hello this is an exception form the displayNavFullWidth";
+        }
+        if(!$this->isCached($this->templateFile, $this->getCacheId($this->name))){
+        $this->context->smarty->assign($this->getWidgetVariables($hookName, $configuration));
+        }
         return $this->fetch("module:mybasicmodule/views/templates/hook/footer.tpl", $this->getCacheId('mybasicmodule'));
         
     }
 
     public function getWidgetVariables($hookName, array $configuration)
     {   
-        return true;
+        return [
+            'idcart'=> $this->context->cart->id,
+            'myparamtest' => "Prestashop developer",
+        ];
     }
 
 }
