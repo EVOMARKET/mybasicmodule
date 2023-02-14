@@ -103,8 +103,22 @@ class MyBasicModule extends Module implements WidgetInterface
             'myparamtest' => "Prestashop developer",
         ];
     }
-    public function getContent(){
-        return "This is configuration page.";
+    public function getContent()
+    {
+        // return "To jest strona konfiguracyjna";
+        $message = null;
+        if(Tools::getValue("courserating")){
+            Configuration::updateValue('COURSE_RATING', Tools::getValue("courserating"));
+            $message = "Formularz został zapisany prawidłowo";
+        }
+        $courserating = Configuration::get('COURSE_RATING');
+        $this->context->smarty->assign(
+            [
+                'courserating' => $courserating,
+                'message' => $message
+            ]
+        );
+       return $this->fetch("module:mybasicmodule/views/templates/admin/configuration.tpl");
     }
 
 }
