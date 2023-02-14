@@ -103,5 +103,8 @@ class MyBasicModule extends Module implements WidgetInterface
             'myparamtest' => "Prestashop developer",
         ];
     }
+    public function getContent(){
+        return "This is configuration page.";
+    }
 
 }
