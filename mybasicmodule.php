@@ -73,6 +73,7 @@ class MyBasicModule extends Module implements WidgetInterface
         return
             parent::install()
             && $this->registerHook('registerGDPRConsent')
+            && $this->registerHook('moduleRoutes')
             && $this->dbInstall();       
     }
     //uninstall method 
@@ -86,14 +87,15 @@ class MyBasicModule extends Module implements WidgetInterface
   
     public function renderWidget($hookName , array $configuration)
     {    
+        echo $this->context->link->getModuleLink($this->name, "test");
+
         if($hookName === 'displayNavFullWidth'){
-            return "Hello this is an exception form the displayNavFullWidth";
+            return "Hello this is an exception form the displayNavFullWidth !";
         }
         if(!$this->isCached($this->templateFile, $this->getCacheId($this->name))){
         $this->context->smarty->assign($this->getWidgetVariables($hookName, $configuration));
         }
-        return $this->fetch("module:mybasicmodule/views/templates/hook/footer.tpl", $this->getCacheId('mybasicmodule'));
-        
+        return $this->fetch("module:mybasicmodule/views/templates/hook/footer.tpl");
     }
 
     public function getWidgetVariables($hookName, array $configuration)
@@ -106,18 +108,19 @@ class MyBasicModule extends Module implements WidgetInterface
     public function getContent()
     {
         $output = "";
-        if(Tools::isSubmit('submit' .$this->name)){
+        if(Tools::isSubmit('submit' . $this->name)) {
             $courserating = Tools::getValue('courserating');
+
             if($courserating && !empty($courserating) && Validate::isGenericName($courserating))
             {
             Configuration::updateValue('COURSE_RATING', Tools::getValue("courserting"));
-            $output = $this->displayConfirmation($this->trans('Form submitted succesfully!'));
+            $output .= $this->displayConfirmation($this->trans('Form submitted succesfully!'));
             }
             else {
                 $output .= $this->displayError($this->trans('Form has not been submitted succesfully!'));
             }
         }
-        return $output . $this->displayForm();
+        return $output . $this->displayForm() ;
     }
     
         public function displayForm()
@@ -168,13 +171,29 @@ class MyBasicModule extends Module implements WidgetInterface
                 ],
                 'back' => [
                     'href' => AdminController::$currentIndex . '&token=' . Tools::getAdminTokenLite('AdminModules'),
-                    'desc' => $this->l('Back to list')
+                    'desc' => $this->l('Back to list'),
                 ]
             ];
             $helper->fields_value['courserating'] = Configuration::get('COURSE_RATING');
                     return $helper->generateForm($fields);
     
         }
-    
+    //hookModuleRoutes
+    public function hookModuleRoutes($params)
+      {
+        return [
+            'test' =>[
+                'controller'=> 'test',
+                'rule'=> "fc-test",
+                'keywords'=> [],
+                'params'=> [
+                    'module'=> $this->name,
+                    'fc'=> 'module',
+                    'controller'=> 'test'
+                ]
+                ]
+                ];
+                
+            }
 
 }

@@ -1,6 +1,6 @@
 <?php
 
-use GuzzleHttp\Event\AbstractEvent;
+//use GuzzleHttp\Event\AbstractEvent;
 
 class MyBasicModuleTestModuleFrontController extends ModuleFrontController
 {
