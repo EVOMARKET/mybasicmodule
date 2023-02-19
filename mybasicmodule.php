@@ -28,7 +28,7 @@
 *  International Registered Trademark & Property of PrestaShop SA
 
 */
-
+use PrestaShop\PrestaShop\Core\Module;
 use PrestaShop\PrestaShop\Core\Module\WidgetInterface;
 use PrestaShop\Module\Mbo\RecommendedModule\RecommendedModule;
 
@@ -44,6 +44,7 @@ class MyBasicModule extends Module implements WidgetInterface
     public $tab;
     public $version;
     public $autor;
+    
    
 
     public function __construct()
@@ -68,20 +69,83 @@ class MyBasicModule extends Module implements WidgetInterface
         $this->templateFile = "module:mybasicmodule/views/templates/hook/firstFooter.tpl";
     }
     // install method 
+    /**
+     * install pre-config
+     *
+     * @return bool
+     */
     public function install()
     {
         return
-            parent::install()
-            && $this->registerHook('registerGDPRConsent')
-            && $this->registerHook('moduleRoutes')
-            && $this->dbInstall();       
+        $this->sqlInstall()
+        && $this->installTab() ;
+         parent::install()
+          && $this->registerHook('registerGDPRConsent')
+          && $this->registerHook('displayCheckoutSubtotalDetails')
+          && $this->registerHook('moduleRoutes');
     }
     //uninstall method 
-    public function uninstall():bool
+    public function uninstall(): bool
     {
-        return  parent::uninstall();
+        return 
+        $this->sqlUninstall()
+        &&  $this->uninstallTab()
+        && parent::uninstall();
     }
     public function dbInstall(){
+        return true;
+    }
+    protected function sqlInstall() {
+    //sql query to create database table
+       
+        $sqlCreate = "CREATE TABLE IF NOT EXISTS  `" . _DB_PREFIX_ . "testcomment` (
+            `id_sample` int(11) unsigned NOT NULL AUTO_INCREMENT,
+            `user_id` varchar(255) DEFAULT NULL,
+            `comment` varchar(255) DEFAULT NULL,
+            PRIMARY KEY (`id_sample`)     
+      )  ENGINE=InnoDb DEFAULT CHARSET=UTF8;";
+          
+        return Db::getInstans()->execute($sqlCreate);  
+    }
+    
+
+    protected function sqlUninstall()
+    {
+        $sqldrop = "DROP TABLE  `" . _DB_PREFIX_ . "testcomment`";
+        return Db::getInstance()->execute($sqldrop);
+    }
+
+    public function installTab() {
+        $tab = new Tab();
+        $tab->class_name= 'AdminTest';
+        $tab->module = $this->name;
+        $tab->id_parent = (int)Tab::getIdFromClassName('DEFAULT');
+        $tab->icon = 'settings_applications';
+        $languages = Language::getLanguages();
+        foreach ($languages as $lang) {
+            $tab->name[$lang['id_lang']] = $this->l('TEST Admin controller');
+        }      
+
+        try {
+            $tab->save();
+        } catch(Exception $e) {
+            echo $e->getMessage();
+            return false;
+        }
+        
+    }
+    private function uninstallTab(){
+        $idTab = (int)Tab::getIdFromClassName('AdminTest');
+
+        if($idTab){
+            $tab = new Tab($idTab);
+            try {
+                $tab->delete();
+            } catch(Exeption $e){
+                echo $e->getMessage();
+                return false;
+            }
+        }
         return true;
     }
   
@@ -192,8 +256,7 @@ class MyBasicModule extends Module implements WidgetInterface
                     'controller'=> 'test'
                 ]
                 ]
-                ];
-                
+                ];              
             }
 
 }
