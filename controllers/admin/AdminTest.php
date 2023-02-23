@@ -1,4 +1,5 @@
 <?php
-//Tools::checkPhpVersion();
+Tools::checkPhpVersion();
 
-class AdminController extends ModuleAdminController{}
+class AdminTestController extends ModuleAdminController{}
+?>
