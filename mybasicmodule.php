@@ -117,7 +117,7 @@ class MyBasicModule extends Module implements WidgetInterface
         $sqldrop = "DROP TABLE  `" . _DB_PREFIX_ . "testcomment`";
         return Db::getInstance()->execute($sqldrop);
     }
-
+/** */
     public function installtab() {
         $tab = new Tab();
         $tab->active = 1;
