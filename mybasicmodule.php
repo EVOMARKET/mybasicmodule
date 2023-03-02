@@ -24,27 +24,24 @@
 *  International Registered Trademark & Property of PrestaShop SA
 */
 
+use PrestaShop\PrestaShop\Core\Module\WidgetInterface;
+
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-use PrestaShop\PrestaShop\Core\Module\WidgetInterface;
-
+//class MyBasicModule extends Module implements WidgetInterface
 class MyBasicModule extends Module implements WidgetInterface
 {
     public $name;
     public $templateFile;
+    public $tab;
     public $version;
     public $autor;
-    public $need_instance;
-    public $ps_version_compilancy;
-    public $bootstrap;
-    public $displayName;
-    public $description;
-    public $confirmrUninstall;
-    public $Lang;
-  
     
+   
+
     public function __construct()
     {
         $this->name = "mybasicmodule";
@@ -64,59 +61,50 @@ class MyBasicModule extends Module implements WidgetInterface
         $this->description = $this->l("This is a great testing module");
         $this->confirmrUninstall = $this->l("Aru you crayzy, you are going to unistall a grat module ?");
         $this->templateFile = "module:mybasicmodule/views/templates/hook/footer.tpl";
-       // $this->templateFile = "module:mybasicmodule/views/templates/hook/firstFooter.tpl";
+        $this->templateFile = "module:mybasicmodule/views/templates/hook/firstFooter.tpl";
     }
-   
+    // install method 
+    /**
+     * install pre-config
+     *
+     * @return bool
+     */
     public function install()
-    {    
-                Configuration::updateValue('MYBASICMODULE', false);
-        if(
-                !$this->sqlInstall() || 
-                !$this->installTab() ||
-                !parent::install() ||
-                !$this->registerHook('registerGDPRConsent') ||
-                !$this->registerHook('displayCheckoutSubtotalDetails')||
-                !$this->registerHook('moduleRoutes')
-        )    {
-            return false;
-        }   
-        return true;      
-            }
+    {
+        return
+        $this->sqlInstall() && $this->installTab();
+      if( 
+         parent::install()
+          &&$this->registerHook('registerGDPRConsent')
+          &&$this->registerHook('displayCheckoutSubtotalDetails')
+          &&$this->registerHook('moduleRoutes')
+      )
+     return true;
+      }
+
+    }
     //uninstall method 
-    public function uninstall()
+    public function uninstall(): bool
     {
         return 
-        $this->sqlUninstall() &&  $this->uninstallTab();
-        if(
-            parent::uninstall()
-        ){
-            $idTab = (int)Tab::getIdFromClassName('AdminTest');
-
-        if($idTab){
-            $tab = new Tab($idTab);
-            try {
-                $tab->delete();
-            } catch(Exeption $e){
-                echo $e->getMessage();
-                return false;
-            }
-            return true;
-        }   
-        
+        $this->sqlUninstall()
+        &&  $this->uninstallTab()
+        && parent::uninstall();
     }
-}
- 
+    public function dbInstall(){
+        return true;
+    }
     protected function sqlInstall() {
     //sql query to create database table
        
-        $sqlCreate = "CREATE TABLE  `" . _DB_PREFIX_ . "testcomment` (
+        $sqlCreate = "CREATE TABLE IF NOT EXISTS  `" . _DB_PREFIX_ . "testcomment` (
             `id_sample` int(11) unsigned NOT NULL AUTO_INCREMENT,
             `user_id` varchar(255) DEFAULT NULL,
             `comment` varchar(255) DEFAULT NULL,
             PRIMARY KEY (`id_sample`)     
       )  ENGINE=InnoDb DEFAULT CHARSET=UTF8;";
           
-        return Db::getInstance()->execute($sqlCreate);  
+        return Db::getInstans()->execute($sqlCreate);  
     }
     
 
@@ -126,21 +114,16 @@ class MyBasicModule extends Module implements WidgetInterface
         return Db::getInstance()->execute($sqldrop);
     }
 
-   public function installTab() {
+    public function installTab() {
         $tab = new Tab();
-        $tab->active = 1;
         $tab->class_name= 'AdminTest';
         $tab->module = $this->name;
-       /*******************kod udemy */
-       $languages = Language::getLanguages();
-        foreach($languages as $lang){
-            $tab->name[$lang['id_lang']] = $this->l('Test Admin controller');
-        }
-       // $tab->position = 3;
-        $tab->id_parent = (int) Tab::getIdFromClassName('DEFAULT');
-        
-        $tab->add();
-        $tab->save();
+        $tab->id_parent = (int)Tab::getIdFromClassName('DEFAULT');
+        $tab->icon = 'settings_applications';
+        $languages = Language::getLanguages();
+        foreach ($languages as $lang) {
+            $tab->name[$lang['id_lang']] = $this->l('TEST Admin controller');
+        }      
 
         try {
             $tab->save();
@@ -148,6 +131,7 @@ class MyBasicModule extends Module implements WidgetInterface
             echo $e->getMessage();
             return false;
         }
+        
     }
     private function uninstallTab(){
         $idTab = (int)Tab::getIdFromClassName('AdminTest');
@@ -273,6 +257,5 @@ class MyBasicModule extends Module implements WidgetInterface
                 ]
                 ];              
             }
-        
 
 }
