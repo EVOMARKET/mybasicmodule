@@ -1,13 +1,9 @@
 <?php
-
-//use PrestaShop\Classes\module\Module.php
-
 /**
 * 2007-2022 PrestaShop
 *
 * NOTICE OF LICENSE
 *
-
 * This source file is subject to the Academic Free License (AFL 3.0)
 * that is bundled with this package in the file LICENSE.txt.
 * It is also available through the world-wide-web at this URL:
@@ -26,27 +22,29 @@
 *  @copyright 2007-2022 PrestaShop SA
 *  @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
 *  International Registered Trademark & Property of PrestaShop SA
-
 */
-use PrestaShop\PrestaShop\Core\Module;
-use PrestaShop\PrestaShop\Core\Module\WidgetInterface;
-use PrestaShop\Module\Mbo\RecommendedModule\RecommendedModule;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
+//use Language;
+use PrestaShop\PrestaShop\Core\Module\WidgetInterface;
 
-//class MyBasicModule extends Module implements WidgetInterface
 class MyBasicModule extends Module implements WidgetInterface
 {
     public $name;
     public $templateFile;
-    public $tab;
     public $version;
     public $autor;
+    public $need_instance;
+    public $ps_version_compilancy;
+    public $bootstrap;
+    public $displayName;
+    public $description;
+    public $confirmrUninstall;
+    public $parent;
+  
     
-   
-
     public function __construct()
     {
         $this->name = "mybasicmodule";
@@ -68,63 +66,77 @@ class MyBasicModule extends Module implements WidgetInterface
         $this->templateFile = "module:mybasicmodule/views/templates/hook/footer.tpl";
         $this->templateFile = "module:mybasicmodule/views/templates/hook/firstFooter.tpl";
     }
-    // install method 
-    /**
-     * install pre-config
-     *
-     * @return bool
-     */
+   
     public function install()
-    {
-        return
-        $this->sqlInstall()
-        && $this->installTab() ;
-         parent::install()
-          && $this->registerHook('registerGDPRConsent')
-          && $this->registerHook('displayCheckoutSubtotalDetails')
-          && $this->registerHook('moduleRoutes');
+    {      
+            if( !$this->sqlInstall() ||  !$this->installtab())
+            {
+                return false;
+            }
+    
+          if(!parent::install()
+              || !$this->registerHook('registerGDPRConsent')
+              || !$this->registerHook('displayCheckoutSubtotalDetails')
+              || !$this->registerHook('moduleRoutes'))
+            {
+                return false;
+            }
+        
+                return true;
+             
     }
     //uninstall method 
-    public function uninstall(): bool
+    public function uninstall(): Bool
     {
-        return 
-        $this->sqlUninstall()
-        &&  $this->uninstallTab()
-        && parent::uninstall();
+        if(
+            !$this->sqlUninstall()  ||  !$this->uninstalltab()
+        )
+        {
+            return false;
+        } 
+        if(
+            !parent::uninstall()
+        )
+        {
+            return false;
+        }  
+        return true; 
+        
     }
-    public function dbInstall(){
-        return true;
-    }
+ 
     protected function sqlInstall() {
     //sql query to create database table
        
-        $sqlCreate = "CREATE TABLE IF NOT EXISTS  `" . _DB_PREFIX_ . "testcomment` (
+        $sqlCreate = "CREATE TABLE IF NOT EXISTS `" . _DB_PREFIX_ . "testcomment` (
             `id_sample` int(11) unsigned NOT NULL AUTO_INCREMENT,
             `user_id` varchar(255) DEFAULT NULL,
             `comment` varchar(255) DEFAULT NULL,
             PRIMARY KEY (`id_sample`)     
       )  ENGINE=InnoDb DEFAULT CHARSET=UTF8;";
           
-        return Db::getInstans()->execute($sqlCreate);  
+        return Db::getInstance()->execute($sqlCreate);  
     }
     
 
     protected function sqlUninstall()
     {
-        $sqldrop = "DROP TABLE  `" . _DB_PREFIX_ . "testcomment`";
+        $sqldrop = "DROP TABLE IF EXISTS  `" . _DB_PREFIX_ . "testcomment`";
         return Db::getInstance()->execute($sqldrop);
     }
 
-    public function installTab() {
+    public function installtab() {
         $tab = new Tab();
+        $tab->active = 1;
         $tab->class_name= 'AdminTest';
+        $tab->position = 3;
+        $tab->name = array();
+        foreach (Language::getLanguages(true) as $lang) {
+        $tab->name[$lang['id_lang']] = 'Mój pierwszy moduł';
+        }
+        $tab->id_parent = (int) Tab::getIdFromClassName('DEFAULT');
         $tab->module = $this->name;
-        $tab->id_parent = (int)Tab::getIdFromClassName('DEFAULT');
-        $tab->icon = 'settings_applications';
-        $languages = Language::getLanguages();
-        foreach ($languages as $lang) {
-            $tab->name[$lang['id_lang']] = $this->l('TEST Admin controller');
-        }      
+        $tab->add();
+        $tab->save();
 
         try {
             $tab->save();
@@ -132,9 +144,8 @@ class MyBasicModule extends Module implements WidgetInterface
             echo $e->getMessage();
             return false;
         }
-        
     }
-    private function uninstallTab(){
+    private function uninstalltab(){
         $idTab = (int)Tab::getIdFromClassName('AdminTest');
 
         if($idTab){
