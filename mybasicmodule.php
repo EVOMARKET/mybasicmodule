@@ -23,9 +23,6 @@
 *  @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
 *  International Registered Trademark & Property of PrestaShop SA
 */
-use PrestaShop\PrestaShop\Core\Module;
-use PrestaShop\PrestaShop\Core\Module\WidgetInterface;
-use PrestaShop\Module\Mbo\RecommendedModule\RecommendedModule;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -71,31 +68,28 @@ class MyBasicModule extends Module implements WidgetInterface
     }
    
     public function install()
-    {
-        return
-        $this->sqlInstall()
-        && $this->installTab() ;
-         parent::install()
-          && $this->registerHook('registerGDPRConsent')
-          && $this->registerHook('displayCheckoutSubtotalDetails')
-          && $this->registerHook('moduleRoutes');
+    {    
+        if (Shop::isFeatureActive()) {
+            Shop::setContext(Shop::CONTEXT_ALL);
+        }
+        return(
+        $this->sqlInstall() &&
+        $this->installTab() &&
+        parent::install()&&
+        $this->registerHook('registerGDPRConsent')&&
+        $this->registerHook('displayCheckoutSubtotalDetails')&&
+        $this->registerHook('moduleRoutes')
+        );
+        
     }
     //uninstall method 
-    public function uninstall(): Bool
-    {
-        if(
-            !$this->sqlUninstall()  ||  !$this->uninstalltab()
-        )
-        {
-            return false;
-        } 
-        if(
-            !parent::uninstall()
-        )
-        {
-            return false;
-        }  
-        return true; 
+    public function uninstall()
+    {   
+        return(
+            parent::uninstall() &&
+            $this->sqlUninstall()  &&  $this->uninstalltab()  
+        );
+        
         
     }
  
