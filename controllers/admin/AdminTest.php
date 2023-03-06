@@ -1,11 +1,6 @@
 <?php
-<<<<<<< HEAD
-Tools::checkPhpVersion();
 
-class AdminTestController extends ModuleAdminController{}
-?>
-=======
-//Tools::checkPhpVersion();
+Tools::checkPhpVersion();
 require_once(_PS_MODULE_DIR_ .'mybasicmodule/classes/comment.class.php');
 class AdminTestController extends ModuleAdminController
 {
@@ -24,4 +19,4 @@ class AdminTestController extends ModuleAdminController
         parent::__construct();
     }
 }
->>>>>>> 070d0fa62e84ad91f0dcd029a49f5c0676104a25
+
