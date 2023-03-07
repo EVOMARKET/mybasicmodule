@@ -8,7 +8,7 @@ class CommentTest extends ObjectModel
 
     public static $definition = [
         'table'=> _DB_PREFIX_ . 'testcomment',
-        'primary'=> 'id',
+        'primary'=> 'id_sample',
         'multilang' => true,
         'multilang_shop'=>true,
         'fields'=>

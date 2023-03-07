@@ -24,30 +24,13 @@
 *  International Registered Trademark & Property of PrestaShop SA
 */
 
+
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 //use Language;
-
-use JetBrains\PhpStorm\Language;
-use Symfony\Component\HttpKernel\Controller\ControllerResolverInterface;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
-use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
-use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
-use Symfony\Component\HttpKernel\Event\FinishRequestEvent;
-use Symfony\Component\HttpKernel\Event\GetResponseEvent;
-use Symfony\Component\HttpKernel\Event\GetResponseForControllerResultEvent;
-use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
-use Symfony\Component\HttpKernel\Event\PostResponseEvent;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-
-
 use PrestaShop\PrestaShop\Core\Module\WidgetInterface;
-namespace Symfony\Component\HttpKernel;
 
 class MyBasicModule extends Module implements WidgetInterface
 {
@@ -72,8 +55,8 @@ class MyBasicModule extends Module implements WidgetInterface
         $this->autor = "Grzegorz Hys";
         $this->need_instance = 0;
         $this->ps_version_compilancy = [
-            "min" => "1.7.0.0",
-            "max" => '8.99.99'
+            "min" => "1.6",
+            "max" => _PS_VERSION_
         ];
         $this->bootstrap = true;
 
@@ -84,35 +67,39 @@ class MyBasicModule extends Module implements WidgetInterface
         $this->confirmrUninstall = $this->l("Aru you crayzy, you are going to unistall a grat module ?");
         $this->templateFile = "module:mybasicmodule/views/templates/hook/footer.tpl";
         $this->templateFile = "module:mybasicmodule/views/templates/hook/firstFooter.tpl";
-        if (!Configuration::get('mybasicmodule')) {
-            $this->warning = $this->l('No name provided');
-
     }
    
     public function install()
-    {    
+    {
         if (Shop::isFeatureActive()) {
             Shop::setContext(Shop::CONTEXT_ALL);
         }
         return(
         parent::install()&&
-        $this->sqlInstall() &&
-        $this->installTab() &&
+        $this->sqlInstall()&&
+        $this->installTab()&&
+    
         $this->registerHook('registerGDPRConsent')&&
         $this->registerHook('displayCheckoutSubtotalDetails')&&
         $this->registerHook('moduleRoutes')
-        && Configuration::updateValue('mybasicmodule', 'my friend')
         );
-        
     }
     //uninstall method 
-    public function uninstall()
-    {   
-        return(
-            parent::uninstall() &&
-            $this->sqlUninstall()  &&  $this->uninstalltab()  
-        );
-        
+    public function uninstall(): Bool
+    {
+        if(
+            !$this->sqlUninstall()  ||  !$this->uninstalltab()
+        )
+        {
+            return false;
+        } 
+        if(
+            !parent::uninstall()
+        )
+        {
+            return false;
+        }  
+        return true; 
         
     }
  
@@ -140,22 +127,15 @@ class MyBasicModule extends Module implements WidgetInterface
         $tab = new Tab();
         $tab->active = 1;
         $tab->class_name= 'AdminTest';
-        $tab ->icon = 'settings_applications';
         $tab->position = 3;
-          //$tab->name = array();
-       /* foreach (Language::getLanguages(true) as $lang) {
+        $tab->name = array();
+        foreach (Language::getLanguages(true) as $lang) {
         $tab->name[$lang['id_lang']] = 'Mój pierwszy moduł';
-        }*/
-
+        }
         $tab->id_parent = (int) Tab::getIdFromClassName('DEFAULT');
         $tab->module = $this->name;
         $tab->add();
         $tab->save();
-      
-        $languages = Language::getLanguages();
-        foreach($languages as $lang) {
-            $tab->name[$lang['id_lang']]=$this->l('TEST Admin controller');
-        }
 
         try {
             $tab->save();
