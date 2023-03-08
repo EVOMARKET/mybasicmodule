@@ -65,5 +65,16 @@ class AdminTestController extends ModuleAdminController
         
             return parent::renderForm();
     }
+    public function renderView(){
+        $tplFile = dirname(__FILE__) . '/../../views/templates/admin/view.tpl';
+        $tpl = $this->context->smarty->createTemplate($tplFile);
+        $tpl->assign(
+            [
+                'test'=> 123
+            ]
+            );
+       return $tpl->fetch();
+       
+    }
 }
 
