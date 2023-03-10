@@ -1,4 +1,8 @@
+<div class="panel">
 <h1>
-{$test}
+{$data.user_id}
 </h1>
-Lorem ipsum
+<p>
+{$data.comment}
+</p>
+</div>

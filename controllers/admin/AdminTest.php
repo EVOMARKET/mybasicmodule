@@ -4,6 +4,7 @@ Tools::checkPhpVersion();
 require_once(_PS_MODULE_DIR_ .'mybasicmodule/classes/comment.class.php');
 class AdminTestController extends ModuleAdminController
 {
+    
     public function __construct()
     {
         $this->table = 'testcomment';
@@ -12,7 +13,7 @@ class AdminTestController extends ModuleAdminController
         $this->bootstrap = true;
 
         $this->fields_list = [
-            'id_test' => [
+            'id_sample' => [
                 'title' => 'The id',
                 'align' => 'left'
             ],
@@ -39,7 +40,7 @@ class AdminTestController extends ModuleAdminController
             'input'=>[
                 [
                 'type'=>'text',
-                'label'=>'The user',
+                'label'=>'The user id',
                 'name'=>'user_id',
                 'class'=>'input fixed-with-sm',
                 'required'=>true,
@@ -68,9 +69,18 @@ class AdminTestController extends ModuleAdminController
     public function renderView(){
         $tplFile = dirname(__FILE__) . '/../../views/templates/admin/view.tpl';
         $tpl = $this->context->smarty->createTemplate($tplFile);
+        //fetch data
+        $sql = new DbQuery();
+      echo  $sql->select(`*`)
+            ->from($this->table)
+            ->where('id_sample =  '. Tools::getValue('id_sample'));
+
+            $data = Db::getInstance()->executeS($sql);
+            print_r($data);
+            //assign vars
         $tpl->assign(
             [
-                'test'=> 123
+                'data'=> $data['0']
             ]
             );
        return $tpl->fetch();

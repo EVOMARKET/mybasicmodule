@@ -14,9 +14,10 @@ class CommentTest extends ObjectModel
         'fields'=>
         [
             'user_id'=>[
-                'type'=>self::TYPE_INT,
-                'size'=>11,
-                'validate'=>'isunsignedInt',
+                'type'=>self::TYPE_STRING,
+                'size'=>255,
+               // 'validate'=>'isunsignedInt',
+               'validate'=>'isCleanHtml',
                 'required'=> true
             ],
             'comment'=> [
@@ -26,5 +27,6 @@ class CommentTest extends ObjectModel
                 'required'=>true
             ]
         ]
-    ];
+            ];
+            
 }
