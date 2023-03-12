@@ -4,7 +4,32 @@ Tools::checkPhpVersion();
 require_once(_PS_MODULE_DIR_ .'mybasicmodule/classes/comment.class.php');
 class AdminTestController extends ModuleAdminController
 {
-    
+    /**lekcja 36 (koniec rodziału Admin controller)********************************** */
+   /* public function initContent()
+   {
+        parent::initContent();
+        $content = "Hello tu ziemia";
+        $this->context->smarty->assign(
+            array(
+               // 'content' => $this->content.$content
+               'content' =>$content
+            )
+        );
+    }*/
+
+    public function initContent()
+    {
+        parent::initContent();
+        $content = $this->context->smarty->fetch(
+            _PS_MODULE_DIR_ . 'mybasicmodule/views/templates/admin/configuration2.tpl'
+        );
+        $this->context->smarty->assign(
+            [
+                'content'=>$content
+            ]
+        );
+    }
+    /***********************************koniec lekcji 35 */
     public function __construct()
     {
         $this->table = 'testcomment';
