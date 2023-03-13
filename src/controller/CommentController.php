@@ -5,8 +5,14 @@ use Symfony\Component\HttpFoundation\Response;
 class CommentController extends FrameworkBundleAdminController
 
 {
-    public function indexAction(){
+    public function indexAction()
+    {
       // return new Response ("Hello world");
-      return $this ->render("@Modules/mybasicmodule/views/templates/admin/comment.html.twig");
+      return $this ->render("@Modules/mybasicmodule/views/templates/admin/comment.html.twig",
+      [
+        'test'=> 123
+      ]
+    );
+      
     }
 }
