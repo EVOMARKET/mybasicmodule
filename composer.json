@@ -1,0 +1,13 @@
+{
+    "name":"hys/commentcontroller",
+    "description": "A controller that handle comments",
+    "autoload": {
+        "psr-4": {
+            "Mybasicmodule\\Controller\\": "src/controller/"
+        }
+    },
+    "config": {
+        "prepend-autoloader":true
+    },
+    "type":"prestashop-module"
+}
