@@ -3,7 +3,8 @@
     "description": "A controller that handle comments",
     "autoload": {
         "psr-4": {
-            "Mybasicmodule\\Controller\\": "src/controller/"
+            "Mybasicmodule\\Controller\\": "src/Controller/",
+            "Mybasicmodule\\Form\\": "src/Form"
         }
     },
     "config": {
