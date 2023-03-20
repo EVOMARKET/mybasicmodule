@@ -1,6 +1,6 @@
 blog_list:
     path: /blog
-    # the controller value has the format 'controller_class::method_name'    
+    # the controller value has the format 'controller_class::method_name'
     controller: Mybasicmodule\Controller\CommentController::indexAction
 
     # if the action is implemented as the __invoke() method of the

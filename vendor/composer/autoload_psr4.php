@@ -7,5 +7,5 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'Mybasicmodule\\Form\\' => array($baseDir . '/src/Form'),
-    'Mybasicmodule\\Controller\\' => array($baseDir . '/src/controller'),
+    'Mybasicmodule\\Controller\\' => array($baseDir . '/src/Controller'),
 );

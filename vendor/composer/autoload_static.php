@@ -21,7 +21,7 @@ class ComposerStaticInit0e495079098310266f8e352b914016ae
         ),
         'Mybasicmodule\\Controller\\' => 
         array (
-            0 => __DIR__ . '/../..' . '/src/controller',
+            0 => __DIR__ . '/../..' . '/src/Controller',
         ),
     );
 
